@@ -1,0 +1,92 @@
+package com.neoledger.security;
+
+import java.io.IOException;
+import java.util.Collections;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@Component
+public class JwtAuthenticationFilter
+        extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtService jwtService;
+
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain)
+            throws ServletException, IOException {
+
+        System.out.println("========== JWT FILTER EXECUTED ==========");
+
+        String authHeader =
+                request.getHeader("Authorization");
+
+        if (authHeader != null
+                && authHeader.startsWith("Bearer ")) {
+
+            String token =
+                    authHeader.substring(7);
+
+            System.out.println("TOKEN = " + token);
+
+            try {
+
+                boolean valid =
+                        jwtService.isTokenValid(token);
+
+                System.out.println("VALID = " + valid);
+
+                if (!valid) {
+
+                    response.setStatus(
+                            HttpServletResponse.SC_UNAUTHORIZED);
+
+                    return;
+                }
+
+                String email =
+                        jwtService.extractEmail(token);
+
+                System.out.println("JWT VALID");
+                System.out.println("EMAIL = " + email);
+
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(
+                                email,
+                                null,
+                                Collections.emptyList());
+
+                SecurityContextHolder
+                        .getContext()
+                        .setAuthentication(auth);
+
+                System.out.println("AUTHENTICATION SET");
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+                response.setStatus(
+                        HttpServletResponse.SC_UNAUTHORIZED);
+
+                return;
+            }
+        }
+
+        filterChain.doFilter(
+                request,
+                response);
+    }
+}
