@@ -1,8 +1,8 @@
-package com.neoledger.service;
+ package com.neoledger.service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,26 +27,21 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountResponse createAccount(AccountRequest request) {
 
-        User user =
-                userRepository
-                        .findById(request.getUserId())
-                        .orElseThrow(() ->
-                                new RuntimeException("User not found"));
+        User user = userRepository
+                .findById(request.getUserId())
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
 
-        String accountNumber =
-                "ACC" +
-                        (1000 + new Random().nextInt(9000));
+        String accountNumber = generateAccountNumber();
 
-        Account account =
-                Account.builder()
-                        .accountNumber(accountNumber)
-                        .accountType(request.getAccountType())
-                        .balance(BigDecimal.ZERO)
-                        .user(user)
-                        .build();
+        Account account = Account.builder()
+                .accountNumber(accountNumber)
+                .accountType(request.getAccountType())
+                .balance(BigDecimal.ZERO)
+                .user(user)
+                .build();
 
-        Account saved =
-                accountRepository.save(account);
+        Account saved = accountRepository.save(account);
 
         return new AccountResponse(
                 saved.getAccountNumber(),
@@ -55,16 +50,32 @@ public class AccountServiceImpl implements AccountService {
         );
     }
 
-    @Override
-    public AccountResponse getAccount(
-            String accountNumber) {
+    private String generateAccountNumber() {
 
-        Account account =
-                accountRepository
-                        .findByAccountNumber(accountNumber)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Account not found"));
+        String accountNumber;
+
+        do {
+            accountNumber = "ACC" +
+                    UUID.randomUUID()
+                            .toString()
+                            .replace("-", "")
+                            .substring(0, 10)
+                            .toUpperCase();
+
+        } while (accountRepository
+                .findByAccountNumber(accountNumber)
+                .isPresent());
+
+        return accountNumber;
+    }
+
+    @Override
+    public AccountResponse getAccount(String accountNumber) {
+
+        Account account = accountRepository
+                .findByAccountNumber(accountNumber)
+                .orElseThrow(() ->
+                        new RuntimeException("Account not found"));
 
         return new AccountResponse(
                 account.getAccountNumber(),
@@ -74,18 +85,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<AccountResponse> getAccounts(
-            Long userId) {
+    public List<AccountResponse> getAccounts(Long userId) {
 
         return accountRepository
                 .findByUserId(userId)
                 .stream()
-                .map(account ->
-                        new AccountResponse(
-                                account.getAccountNumber(),
-                                account.getAccountType().name(),
-                                account.getBalance()
-                        ))
+                .map(account -> new AccountResponse(
+                        account.getAccountNumber(),
+                        account.getAccountType().name(),
+                        account.getBalance()))
                 .collect(Collectors.toList());
     }
 }
