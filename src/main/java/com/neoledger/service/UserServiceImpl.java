@@ -106,7 +106,10 @@ implements UserService {
                                 user.getEmail());
 
         return new LoginResponse(
-                token);
+                token,
+                user.getRole().name(),
+                user.getEmail()
+        );
     }
 
 }

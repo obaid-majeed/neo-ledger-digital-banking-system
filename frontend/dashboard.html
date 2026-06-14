@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Neo Ledger Dashboard</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+<h2 style="text-align:center;">Neo Ledger Dashboard</h2>
+
+<div class="container">
+
+  <div class="card">
+    <h3>Balance</h3>
+    <div id="balance">₹0</div>
+  </div>
+
+  <div class="card">
+    <h3>Income</h3>
+    <div id="income">₹0</div>
+  </div>
+
+  <div class="card">
+    <h3>Expense</h3>
+    <div id="expense">₹0</div>
+  </div>
+
+</div>
+
+<div class="glass">
+  <h3>Transfer Money</h3>
+
+  <input id="toAccount" placeholder="To Account">
+  <input id="amount" placeholder="Amount">
+
+  <button onclick="transfer()">Send</button>
+</div>
+
+<div class="glass">
+  <h3>Transaction History</h3>
+  <ul id="txnList"></ul>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script src="assets/js/dashboard.js"></script>
+
+</body>
+</html>

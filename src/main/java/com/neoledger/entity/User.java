@@ -1,5 +1,6 @@
  package com.neoledger.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -38,4 +39,5 @@ public class User {
     private Role role;
 
     private LocalDateTime createdAt;
+    private BigDecimal balance = BigDecimal.ZERO;
 }

@@ -1,11 +1,13 @@
- package com.neoledger.dto;
+package com.neoledger.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 @AllArgsConstructor
 public class LoginResponse {
 
     private String token;
+    private String role;
+    private String email;
 }
