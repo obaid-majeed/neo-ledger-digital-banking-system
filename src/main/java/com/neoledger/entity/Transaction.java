@@ -1,4 +1,4 @@
- package com.neoledger.entity;
+  package com.neoledger.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,15 +22,11 @@ public class Transaction {
 
     private String fromAccount;
     private String toAccount;
-    private String accountNumber;
-
 
     private BigDecimal amount;
 
-    //private String type; // DEPOSIT / WITHDRAW / TRANSFER
-
-
     @Enumerated(EnumType.STRING)
     private TransactionType type;
+
     private LocalDateTime createdAt;
 }

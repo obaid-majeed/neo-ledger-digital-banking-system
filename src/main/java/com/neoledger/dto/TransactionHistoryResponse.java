@@ -1,24 +1,21 @@
- package com.neoledger.dto;
+package com.neoledger.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.neoledger.entity.TransactionType;
-
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class TransactionHistoryResponse {
 
-    private String accountNumber;
-
+    private String fromAccount;
+    private String toAccount;
     private BigDecimal amount;
-
     private TransactionType type;
-
     private LocalDateTime createdAt;
 }

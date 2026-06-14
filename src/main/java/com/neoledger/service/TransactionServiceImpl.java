@@ -1,4 +1,4 @@
-package com.neoledger.service;
+ package com.neoledger.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -9,20 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.neoledger.dto.DepositRequest;
-import com.neoledger.dto.WithdrawRequest;
-import com.neoledger.dto.TransferRequest;
-import com.neoledger.dto.TransactionResponse;
-import com.neoledger.dto.TransactionHistoryResponse;
-
-import com.neoledger.entity.Account;
-import com.neoledger.entity.Transaction;
-import com.neoledger.entity.TransactionType;
-
-import com.neoledger.repository.AccountRepository;
-import com.neoledger.repository.TransactionRepository;
-
-import com.neoledger.service.TransactionService;
+import com.neoledger.dto.*;
+import com.neoledger.entity.*;
+import com.neoledger.repository.*;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -39,13 +28,11 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    private void saveTransaction(
-            String accountNumber,
-            BigDecimal amount,
-            TransactionType type) {
+    private void saveTransaction(String from, String to, BigDecimal amount, TransactionType type) {
 
         Transaction tx = Transaction.builder()
-                .accountNumber(accountNumber)
+                .fromAccount(from)
+                .toAccount(to)
                 .amount(amount)
                 .type(type)
                 .createdAt(LocalDateTime.now())
@@ -60,21 +47,18 @@ public class TransactionServiceImpl implements TransactionService {
 
         validateAmount(request.getAmount());
 
-        Account account = accountRepository
-                .findByAccountNumber(request.getAccountNumber())
+        Account account = accountRepository.findByAccountNumber(request.getAccountNumber())
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
         if (account.getBalance() == null) {
             account.setBalance(BigDecimal.ZERO);
         }
 
-        account.setBalance(
-                account.getBalance().add(request.getAmount())
-        );
-
-        Account saved = accountRepository.save(account);
+        account.setBalance(account.getBalance().add(request.getAmount()));
+        accountRepository.save(account);
 
         saveTransaction(
+                null,
                 account.getAccountNumber(),
                 request.getAmount(),
                 TransactionType.DEPOSIT
@@ -82,7 +66,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         return new TransactionResponse(
                 "Deposit Successful",
-                saved.getAccountNumber(),
+                account.getAccountNumber(),
                 request.getAmount()
         );
     }
@@ -93,30 +77,27 @@ public class TransactionServiceImpl implements TransactionService {
 
         validateAmount(request.getAmount());
 
-        Account account = accountRepository
-                .findByAccountNumber(request.getAccountNumber())
+        Account account = accountRepository.findByAccountNumber(request.getAccountNumber())
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
         if (account.getBalance() == null ||
-            account.getBalance().compareTo(request.getAmount()) < 0) {
+                account.getBalance().compareTo(request.getAmount()) < 0) {
             throw new RuntimeException("Insufficient balance");
         }
 
-        account.setBalance(
-                account.getBalance().subtract(request.getAmount())
-        );
-
-        Account saved = accountRepository.save(account);
+        account.setBalance(account.getBalance().subtract(request.getAmount()));
+        accountRepository.save(account);
 
         saveTransaction(
                 account.getAccountNumber(),
+                null,
                 request.getAmount(),
                 TransactionType.WITHDRAW
         );
 
         return new TransactionResponse(
                 "Withdrawal Successful",
-                saved.getAccountNumber(),
+                account.getAccountNumber(),
                 request.getAmount()
         );
     }
@@ -127,16 +108,14 @@ public class TransactionServiceImpl implements TransactionService {
 
         validateAmount(request.getAmount());
 
-        Account from = accountRepository
-                .findByAccountNumber(request.getFromAccount())
-                .orElseThrow(() -> new RuntimeException("Sender account not found"));
+        Account from = accountRepository.findByAccountNumber(request.getFromAccount())
+                .orElseThrow(() -> new RuntimeException("Sender not found"));
 
-        Account to = accountRepository
-                .findByAccountNumber(request.getToAccount())
-                .orElseThrow(() -> new RuntimeException("Receiver account not found"));
+        Account to = accountRepository.findByAccountNumber(request.getToAccount())
+                .orElseThrow(() -> new RuntimeException("Receiver not found"));
 
         if (from.getBalance() == null ||
-            from.getBalance().compareTo(request.getAmount()) < 0) {
+                from.getBalance().compareTo(request.getAmount()) < 0) {
             throw new RuntimeException("Insufficient balance");
         }
 
@@ -148,6 +127,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         saveTransaction(
                 from.getAccountNumber(),
+                to.getAccountNumber(),
                 request.getAmount(),
                 TransactionType.TRANSFER
         );
@@ -162,10 +142,12 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<TransactionHistoryResponse> history(String accountNumber) {
 
-        return transactionRepository.findByAccountNumber(accountNumber)
+        return transactionRepository
+                .findByFromAccountOrToAccount(accountNumber, accountNumber)
                 .stream()
                 .map(tx -> new TransactionHistoryResponse(
-                        tx.getAccountNumber(),
+                        tx.getFromAccount(),
+                        tx.getToAccount(),
                         tx.getAmount(),
                         tx.getType(),
                         tx.getCreatedAt()
