@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Neo Ledger Register</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+<div class="login-card">
+
+    <h1>Neo Ledger</h1>
+
+    <input id="firstName" placeholder="First Name">
+
+    <input id="lastName" placeholder="Last Name">
+
+    <input id="email" type="email" placeholder="Email">
+
+    <input id="mobile" placeholder="Mobile">
+
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="registerUser()">
+        Register
+    </button>
+
+    <a href="login.html">
+        Already have an account?
+    </a>
+
+</div>
+
+<script src="assets/js/app.js"></script>
+
+<script>
+
+async function registerUser() {
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE}/api/auth/register`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    firstName:
+                    document.getElementById("firstName").value,
+
+                    lastName:
+                    document.getElementById("lastName").value,
+
+                    email:
+                    document.getElementById("email").value,
+
+                    mobile:
+                    document.getElementById("mobile").value,
+
+                    password:
+                    document.getElementById("password").value
+                })
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Registration Failed");
+        }
+
+        alert("Registration Successful");
+
+        window.location.href =
+        "login.html";
+
+    }
+
+    catch (err) {
+
+        alert(err.message);
+
+    }
+
+}
+</script>
+<footer class="footer">© 2026 Neo Ledger Digital Banking System |
+    Designed & Developed by Obaid Majeed Khan
+</footer>
+</body>
+</html>

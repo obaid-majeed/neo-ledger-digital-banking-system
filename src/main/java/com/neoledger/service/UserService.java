@@ -1,5 +1,12 @@
 package com.neoledger.service;
 
+import java.util.List;
+
+import com.neoledger.dto.LoginRequest;
+import com.neoledger.dto.LoginResponse;
+import com.neoledger.dto.RegisterRequest;
+import com.neoledger.entity.User;
+
 import com.neoledger.dto.LoginRequest;
 import com.neoledger.dto.LoginResponse;
 import com.neoledger.dto.RegisterRequest;
@@ -10,4 +17,7 @@ public interface UserService {
     User registerUser(RegisterRequest request);
 
     LoginResponse loginUser(LoginRequest request);
+
+    User getUserByEmail(String email);
+    List<User> getAllUsers();
 }

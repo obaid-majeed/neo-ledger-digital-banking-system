@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.neoledger.dto.AccountRequest;
 import com.neoledger.dto.AccountResponse;
+import com.neoledger.repository.UserRepository;
 import com.neoledger.service.AccountService;
 
 @RestController
@@ -15,6 +16,9 @@ public class AccountController {
 
     @Autowired
     private AccountService service;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/create")
     public AccountResponse create(
@@ -35,5 +39,20 @@ public class AccountController {
             @PathVariable Long id) {
 
         return service.getAccounts(id);
+    }
+
+    @GetMapping("/email/{email}")
+    public List<AccountResponse> getAccountsByEmail(
+            @PathVariable String email) {
+
+        Long userId =
+                userRepository
+                        .findByEmail(email)
+                        .orElseThrow(
+                                () -> new RuntimeException(
+                                        "User not found"))
+                        .getId();
+
+        return service.getAccounts(userId);
     }
 }

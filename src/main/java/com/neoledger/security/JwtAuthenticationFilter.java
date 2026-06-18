@@ -50,6 +50,8 @@ public class JwtAuthenticationFilter
 
                 if (!valid) {
 
+                    System.out.println("TOKEN INVALID");
+
                     response.setStatus(
                             HttpServletResponse.SC_UNAUTHORIZED);
 
@@ -76,6 +78,7 @@ public class JwtAuthenticationFilter
 
             } catch (Exception e) {
 
+                System.out.println("JWT ERROR:");
                 e.printStackTrace();
 
                 response.setStatus(

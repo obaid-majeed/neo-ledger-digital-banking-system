@@ -1,49 +1,171 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Neo Ledger Dashboard</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>
+Neo Ledger Dashboard
+</title>
+
+<link rel="stylesheet"
+href="assets/css/style.css">
+
 </head>
 
 <body>
 
-<h2 style="text-align:center;">Neo Ledger Dashboard</h2>
+<div class="dashboard">
 
-<div class="container">
+<h1>Neo Ledger Dashboard</h1>
 
-  <div class="card">
-    <h3>Balance</h3>
-    <div id="balance">₹0</div>
-  </div>
+<div class="cards">
 
-  <div class="card">
-    <h3>Income</h3>
-    <div id="income">₹0</div>
-  </div>
+<div class="card">
 
-  <div class="card">
-    <h3>Expense</h3>
-    <div id="expense">₹0</div>
-  </div>
+<h3>Balance</h3>
+
+<p id="balance">
+₹0
+</p>
 
 </div>
 
-<div class="glass">
-  <h3>Transfer Money</h3>
+<div class="card">
 
-  <input id="toAccount" placeholder="To Account">
-  <input id="amount" placeholder="Amount">
+<h3>Income</h3>
 
-  <button onclick="transfer()">Send</button>
+<p id="income">
+₹0
+</p>
+
 </div>
 
-<div class="glass">
-  <h3>Transaction History</h3>
-  <ul id="txnList"></ul>
+<div class="card">
+
+<h3>Expense</h3>
+
+<p id="expense">
+₹0
+</p>
+
 </div>
+
+</div>
+
+<div class="card">
+
+    <h2>User Profile</h2>
+
+    <p>
+        <strong>Name:</strong>
+        <span id="profileName"></span>
+    </p>
+
+    <p>
+        <strong>Email:</strong>
+        <span id="profileEmail"></span>
+    </p>
+
+    <p>
+        <strong>Role:</strong>
+        <span id="profileRole"></span>
+    </p>
+
+    <p>
+        <strong>Account:</strong>
+        <span id="profileAccount"></span>
+    </p>
+
+</div>
+
+<h2>
+Transfer Money
+</h2>
+
+<input
+id="toAccount"
+placeholder="Receiver Account Number">
+
+<input
+id="amount"
+type="number"
+placeholder="Transfer Amount">
+
+<input
+id="transferOtp"
+placeholder="Enter OTP">
+
+<button onclick="sendTransferOtp()">
+Send OTP
+</button>
+
+<button onclick="verifyAndTransfer()">
+Transfer Money
+</button>
+
+<!--<button onclick="transfer()">
+💸 Transfer Money
+</button>-->
+
+</div>
+
+<div class="card">
+
+<h2>
+Transaction History
+</h2>
+
+<ul id="txnList">
+
+</ul>
+
+</div>
+
+<!--<button onclick="logout()">
+Logout
+</button>
+-->
+ 
+
+	<!--<div class="content">
+	    <h3>Welcome User</h3><br>
+		
+	</div>-->
+<!--	<div class="dash">My Dashboard</div>
+-->
+<div class="navbar">
+
+    <h4 id="welcomeUser">
+        Welcome
+    </h4>
+
+    <div>
+
+        <button
+            id="adminBtn"
+            onclick="openAdmin()">
+            Admin Panel
+        </button>
+
+		<button
+		    id="logoutBtn"
+		    onclick="logout()">
+		    Logout
+		</button>
+
+    </div>
+
+</div>
+
+<footer class="footer">© 2026 Neo Ledger Digital Banking System |
+    Designed & Developed by Obaid Majeed Khan
+</footer>
 
 <script src="assets/js/app.js"></script>
-<script src="assets/js/dashboard.js"></script>
-
-</body>
+<script src="assets/js/dashboard.js"></script></body>
 </html>

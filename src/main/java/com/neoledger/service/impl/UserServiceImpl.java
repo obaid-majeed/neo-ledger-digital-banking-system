@@ -1,6 +1,8 @@
- package com.neoledger.service.impl;
+package com.neoledger.service.impl;
+
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,11 @@ public class UserServiceImpl implements UserService {
                 user.getBalance().add(amount));
 
         return userRepository.save(user);
+    }
+    @Override
+    public List<User> getAllUsers() {
+
+        return userRepository.findAll();
     }
 
     @Override
@@ -109,5 +116,15 @@ public class UserServiceImpl implements UserService {
                         : "CUSTOMER",
                 user.getEmail()
         );
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+
+        return userRepository
+                .findByEmail(email)
+                .orElseThrow(
+                        () -> new RuntimeException(
+                                "User not found"));
     }
 }

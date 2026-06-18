@@ -13,8 +13,8 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    private static final String SECRET =
-            "mysecretkeymysecretkeymysecretkey123456";
+	private static final String SECRET =
+	        "neoLedgerSecretKeyneoLedgerSecretKey";
 
     private final SecretKey key =
             Keys.hmacShaKeyFor(
